@@ -26,7 +26,9 @@ def op1(prog, position, modes):
         else:
             prog[position + 3] = sum
 
-        return prog
+        position += 4
+
+        return prog, position
     except Exception:
         print('error op1 at position: ' + str(position))
 
@@ -50,7 +52,9 @@ def op2(prog, position, modes):
         else:
             prog[position + 3] = product
 
-        return prog
+        position += 4
+
+        return prog, position
     except Exception:
         print('error op2 at position: ' + str(position))
 
@@ -63,7 +67,9 @@ def op3(prog, position, modes):
         else:
             prog[position + 1] = value
 
-        return prog
+        position += 2
+
+        return prog, position
     except Exception:
         print('error op3 at position: ' + str(position))
         print('value: ' + str(value))
@@ -77,19 +83,33 @@ def op4(prog, position, modes):
         else:
             output = prog[position + 1]
 
-        return output
+        position += 2
+
+        return output, position
     except Exception:
         print('error op4 at position: ' + str(position))
 
 
-def move(position, op):
-    switcher = {
-        '01': 4,
-        '02': 4,
-        '03': 2,
-        '04': 2}
+def op5(prog, position):
+    try:
+        if bool(prog[position + 1]) is True:
+            position = prog[position + 2]
+        else:
+            position += 3
 
-    return position + switcher.get(op, '')
+        return position
+    except Exception:
+        print('error op5 at position: ' + str(position))
+
+
+def op6(prog, position):
+    try:
+        if bool(prog[position + 1]) is False:
+            position = prog[position + 2]
+        else:
+            position += 3
+    except Exception:
+        print('error op5 at position: ' + str(position))
 
 
 def parse_instructions(code):
@@ -116,21 +136,19 @@ def part1(prog):
         if op == '99':
             return prog
         elif op == '01':
-            prog = op1(prog, position, modes)
-            position = move(position, op)
+            prog, position = op1(prog, position, modes)
         elif op == '02':
-            prog = op2(prog, position, modes)
-            position = move(position, op)
+            prog, position = op2(prog, position, modes)
         elif op == '03':
-            prog = op3(prog, position, modes)
-            position = move(position, op)
+            prog, position = op3(prog, position, modes)
         elif op == '04':
-            print(op4(prog, position, modes))
-            position = move(position, op)
+            output, position = op4(prog, position, modes)
+            print(output)
+
         else:
             print('err')
 
-            return prog
+            return prog, position
 
 
 def foo():
