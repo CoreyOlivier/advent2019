@@ -31,13 +31,17 @@ class Amp:
 
     def read_input(self):
         self.input_counter +=1
+
         if self.first_call is True:
             self.first_call = False
+
             return self.phase
+
         return self.use_input()
-    
+
     def use_input(self):
         self.needs_input = True
+
         return self.input
 
     def get_output(self):
@@ -56,10 +60,11 @@ class Amp:
 
             if self.op == '99':
                 self.stopped = True
-                break 
+
+                break
             elif self.op == '01':
                #pdb.set_trace()
-                self.prog, self.position = op1(self.prog, self.position, 
+                self.prog, self.position = op1(self.prog, self.position,
                                                self.modes)
             elif self.op == '02':
                 self.prog, self.position = op2(self.prog, self.position,
@@ -88,9 +93,10 @@ class Amp:
                                                     self.modes)
             else:
                 print('invalid self.op')
+
                 break
 
-        
+
 def power_thrusters(prog, perm):
     amps = [Amp(prog, phase) for phase in perm]
     #pdb.set_trace()
@@ -98,15 +104,19 @@ def power_thrusters(prog, perm):
     last = amps[4]
     last.set_input(0)
     idx = 0
+
     while True:
         curr = amps[idx]
         prev = amps[idx - 1]
         curr.set_input(prev.get_output())
         curr.run()
+
         if last.is_stopped() is True:
             #pdb.set_trace()
+
             break
         idx += 1
+
         if idx > 4:
             idx = 0
 
@@ -114,11 +124,13 @@ def power_thrusters(prog, perm):
 def test_phase_permutations(prog):
     perms = list(permutations(range(5,10)))
     max_thrust = 0
+
     for perm in perms:
         amps_out = power_thrusters(prog, perm)
         max_thrust = max(amps_out, max_thrust)
+
     return max_thrust
-    
+
 
 def test_power_thrusters(prog, perm, n):
     n_loops = list(range(n))
@@ -128,20 +140,25 @@ def test_power_thrusters(prog, perm, n):
     last = amps[4]
     last.set_input(0)
     idx = 0
+
     for i in n_loops:
         for n in range(5):
             curr = amps[idx]
             prev = amps[idx - 1]
             curr.set_input(prev.get_output())
             curr.run()
+
             if i == n_loops[-1]:
                 print('Amp ' + str(idx))
                 [print((i,v)) for (i, v) in enumerate(curr.prog)]
                 print(last.output)
+
             if last.is_stopped() is True:
                 #pdb.set_trace()
+
                 break
             idx += 1
+
             if idx > 4:
                 idx = 0
 
@@ -151,6 +168,7 @@ def part1_test():
     prog = parse_file()
     perms = list(permutations(range(0,5)))
     highest_output = 0
+
     for perm in perms:
         amps = [Amp(prog, phase) for phase in perm]
         amps[0].set_input(0)
@@ -164,6 +182,7 @@ def part1_test():
         amps[4].set_input(amps[3].get_output())
         amps[4].run()
         highest_output = max(highest_output, amps[4].get_output())
+
     if highest_output == 22012:
         return 'pass'
     else:
@@ -173,7 +192,7 @@ def part1_test():
 sample1 =[
     3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,
     27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5
-        ] 
+        ]
 phases1 = (9,8,7,6,5)
 sample2 = [3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,
     -5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,
